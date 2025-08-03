@@ -226,7 +226,7 @@ public:
         }
         if (step > step_max)
         {
-            ESP_LOGE("LBFGSpp.LineSearchMoreThuente", "'step' exceeds 'step_max'")
+            ESP_LOGE("LBFGSpp.LineSearchMoreThuente", "'step' exceeds 'step_max'");
             return false;
         };
 
@@ -240,7 +240,7 @@ public:
         // Make sure d points to a descent direction
         if (dg_init >= Scalar(0))
         {
-            ESP_LOGE("LBFGSpp.LineSearchMoreThuente", "the moving direction does not decrease the objective function value")
+            ESP_LOGE("LBFGSpp.LineSearchMoreThuente", "the moving direction does not decrease the objective function value");
             return false;
         };
 
@@ -453,6 +453,7 @@ public:
             grad.swap(grad_lo);
             return true;
         }
+        return true;
     }
 };
 

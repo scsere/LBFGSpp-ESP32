@@ -1,6 +1,6 @@
 if (DEFINED ESP_PLATFORM)
     idf_component_register(
-            INCLUDE "include"
+            INCLUDE_DIRS "include"
             REQUIRES
                 Eigen
     )
