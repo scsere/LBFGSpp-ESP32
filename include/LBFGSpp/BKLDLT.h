@@ -5,8 +5,8 @@
 #define LBFGSPP_BK_LDLT_H
 
 #include <vector>
-#include <stdexcept>
 #include <Eigen/Core>
+#include "EspLogging.h"
 
 /// \cond
 
@@ -393,7 +393,7 @@ public:
 
         m_n = mat.rows();
         if (m_n != mat.cols())
-            throw std::invalid_argument("BKLDLT: matrix must be square");
+            ESP_LOGE("LBFGSpp.BKLDLT", "BKLDLT: matrix must be square");
 
         m_perm.setLinSpaced(m_n, 0, m_n - 1);
         m_permc.clear();
@@ -444,7 +444,7 @@ public:
     void solve_inplace(GenericVector b) const
     {
         if (!m_computed)
-            throw std::logic_error("BKLDLT: need to call compute() first");
+            ESP_LOGE("LBFGSpp.BKLDLT", "BKLDLT: need to call compute() first");
 
         // PAP' = LDL'
         // 1. b -> Pb

@@ -6,7 +6,7 @@
 #define LBFGSPP_LINE_SEARCH_NOCEDAL_WRIGHT_H
 
 #include <Eigen/Core>
-#include <stdexcept>
+#include "EspLogging.h"
 #include "Param.h"
 
 namespace LBFGSpp {
@@ -88,10 +88,10 @@ public:
     {
         // Check the value of step
         if (step <= Scalar(0))
-            throw std::invalid_argument("'step' must be positive");
+            ESP_LOGE("LBFGSpp.LineSearchNocedalWright", "'step' must be positive");
 
         if (param.linesearch != LBFGS_LINESEARCH_BACKTRACKING_STRONG_WOLFE)
-            throw std::invalid_argument("'param.linesearch' must be 'LBFGS_LINESEARCH_BACKTRACKING_STRONG_WOLFE' for LineSearchNocedalWright");
+            ESP_LOGE("LBFGSpp.LineSearchNocedalWright", "'param.linesearch' must be 'LBFGS_LINESEARCH_BACKTRACKING_STRONG_WOLFE' for LineSearchNocedalWright");
 
         // To make this implementation more similar to the other line search
         // methods in LBFGSpp, the symbol names from the literature
@@ -112,7 +112,7 @@ public:
         const Scalar dg_init = dg;
         // Make sure d points to a descent direction
         if (dg_init > Scalar(0))
-            throw std::logic_error("the moving direction increases the objective function value");
+            ESP_LOGE("LBFGSpp.LineSearchNocedalWright", "the moving direction increases the objective function value");
 
         const Scalar test_decr = param.ftol * dg_init,  // Sufficient decrease
             test_curv = -param.wolfe * dg_init;         // Curvature
@@ -182,8 +182,6 @@ public:
             // smallest objective function value during the line search
             if (iter >= param.max_linesearch)
             {
-                // throw std::runtime_error("the line search routine reached the maximum number of iterations");
-
                 // At this point we can guarantee that {step, fx, dg}=={step, fx, dg}_lo
                 // But we need to move {x, grad}_lo back before returning
                 x.swap(x_lo);
@@ -222,7 +220,7 @@ public:
             if (fx - fx_init > step * test_decr || fx >= fx_lo)
             {
                 if (step == step_hi)
-                    throw std::runtime_error("the line search routine failed, possibly due to insufficient numeric precision");
+                    ESP_LOGE("LBFGSpp.LineSearchNocedalWright", "the line search routine failed, possibly due to insufficient numeric precision");
 
                 step_hi = step;
                 fx_hi = fx;
@@ -242,7 +240,7 @@ public:
                 }
 
                 if (step == step_lo)
-                    throw std::runtime_error("the line search routine failed, possibly due to insufficient numeric precision");
+                    ESP_LOGE("LBFGSpp.LineSearchNocedalWright", "the line search routine failed, possibly due to insufficient numeric precision");
 
                 // If reaching here, then the current step satisfies sufficient decrease condition
                 step_lo = step;
@@ -260,9 +258,8 @@ public:
             // but to return the best step size so far, i.e., step_lo
             if (iter >= param.max_linesearch)
             {
-                // throw std::runtime_error("the line search routine reached the maximum number of iterations");
                 if (step_lo <= Scalar(0))
-                    throw std::runtime_error("the line search routine failed, unable to sufficiently decrease the function value");
+                    ESP_LOGE("LBFGSpp.LineSearchNocedalWright", "the line search routine failed, unable to sufficiently decrease the function value");
 
                 // Return everything with _lo
                 step = step_lo;

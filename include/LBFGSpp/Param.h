@@ -5,7 +5,7 @@
 #define LBFGSPP_PARAM_H
 
 #include <Eigen/Core>
-#include <stdexcept>  // std::invalid_argument
+#include "LBFGSpp/EspLogging.h"
 
 namespace LBFGSpp {
 
@@ -191,30 +191,30 @@ public:
     inline void check_param() const
     {
         if (m <= 0)
-            throw std::invalid_argument("'m' must be positive");
+            ESP_LOGE("LBFGSpp.Param", "'m' must be positive");
         if (epsilon < 0)
-            throw std::invalid_argument("'epsilon' must be non-negative");
+            ESP_LOGE("LBFGSpp.Param", "'epsilon' must be non-negative");
         if (epsilon_rel < 0)
-            throw std::invalid_argument("'epsilon_rel' must be non-negative");
+            ESP_LOGE("LBFGSpp.Param", "'epsilon_rel' must be non-negative");
         if (past < 0)
-            throw std::invalid_argument("'past' must be non-negative");
+            ESP_LOGE("LBFGSpp.Param", "'past' must be non-negative");
         if (delta < 0)
-            throw std::invalid_argument("'delta' must be non-negative");
+            ESP_LOGE("LBFGSpp.Param", "'delta' must be non-negative");
         if (max_iterations < 0)
-            throw std::invalid_argument("'max_iterations' must be non-negative");
+            ESP_LOGE("LBFGSpp.Param", "'max_iterations' must be non-negative");
         if (linesearch < LBFGS_LINESEARCH_BACKTRACKING_ARMIJO ||
             linesearch > LBFGS_LINESEARCH_BACKTRACKING_STRONG_WOLFE)
-            throw std::invalid_argument("unsupported line search termination condition");
+            ESP_LOGE("LBFGSpp.Param", "unsupported line search termination condition");
         if (max_linesearch <= 0)
-            throw std::invalid_argument("'max_linesearch' must be positive");
+            ESP_LOGE("LBFGSpp.Param", "'max_linesearch' must be positive");
         if (min_step < 0)
-            throw std::invalid_argument("'min_step' must be positive");
+            ESP_LOGE("LBFGSpp.Param", "'min_step' must be positive");
         if (max_step < min_step)
-            throw std::invalid_argument("'max_step' must be greater than 'min_step'");
+            ESP_LOGE("LBFGSpp.Param", "'max_step' must be greater than 'min_step'");
         if (ftol <= 0 || ftol >= 0.5)
-            throw std::invalid_argument("'ftol' must satisfy 0 < ftol < 0.5");
+            ESP_LOGE("LBFGSpp.Param", "'ftol' must satisfy 0 < ftol < 0.5");
         if (wolfe <= ftol || wolfe >= 1)
-            throw std::invalid_argument("'wolfe' must satisfy ftol < wolfe < 1");
+            ESP_LOGE("LBFGSpp.Param", "'wolfe' must satisfy ftol < wolfe < 1");
     }
 };
 
@@ -350,29 +350,29 @@ public:
     inline void check_param() const
     {
         if (m <= 0)
-            throw std::invalid_argument("'m' must be positive");
+            ESP_LOGE("LBFGSpp.Param", "'m' must be positive");
         if (epsilon < 0)
-            throw std::invalid_argument("'epsilon' must be non-negative");
+            ESP_LOGE("LBFGSpp.Param", "'epsilon' must be non-negative");
         if (epsilon_rel < 0)
-            throw std::invalid_argument("'epsilon_rel' must be non-negative");
+            ESP_LOGE("LBFGSpp.Param", "'epsilon_rel' must be non-negative");
         if (past < 0)
-            throw std::invalid_argument("'past' must be non-negative");
+            ESP_LOGE("LBFGSpp.Param", "'past' must be non-negative");
         if (delta < 0)
-            throw std::invalid_argument("'delta' must be non-negative");
+            ESP_LOGE("LBFGSpp.Param", "'delta' must be non-negative");
         if (max_iterations < 0)
-            throw std::invalid_argument("'max_iterations' must be non-negative");
+            ESP_LOGE("LBFGSpp.Param", "'max_iterations' must be non-negative");
         if (max_submin < 0)
-            throw std::invalid_argument("'max_submin' must be non-negative");
+            ESP_LOGE("LBFGSpp.Param", "'max_submin' must be non-negative");
         if (max_linesearch <= 0)
-            throw std::invalid_argument("'max_linesearch' must be positive");
+            ESP_LOGE("LBFGSpp.Param", "'max_linesearch' must be positive");
         if (min_step < 0)
-            throw std::invalid_argument("'min_step' must be positive");
+            ESP_LOGE("LBFGSpp.Param", "'min_step' must be positive");
         if (max_step < min_step)
-            throw std::invalid_argument("'max_step' must be greater than 'min_step'");
+            ESP_LOGE("LBFGSpp.Param", "'max_step' must be greater than 'min_step'");
         if (ftol <= 0 || ftol >= 0.5)
-            throw std::invalid_argument("'ftol' must satisfy 0 < ftol < 0.5");
+            ESP_LOGE("LBFGSpp.Param", "'ftol' must satisfy 0 < ftol < 0.5");
         if (wolfe <= ftol || wolfe >= 1)
-            throw std::invalid_argument("'wolfe' must satisfy ftol < wolfe < 1");
+            ESP_LOGE("LBFGSpp.Param", "'wolfe' must satisfy ftol < wolfe < 1");
     }
 };
 

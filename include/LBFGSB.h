@@ -4,7 +4,7 @@
 #ifndef LBFGSPP_LBFGSB_H
 #define LBFGSPP_LBFGSB_H
 
-#include <stdexcept>  // std::invalid_argument
+#include "LBFGSpp/EspLogging.h"
 #include <vector>
 #include <Eigen/Core>
 #include "LBFGSpp/Param.h"
@@ -110,18 +110,24 @@ public:
     /// \param fx Out: The objective function value at `x`.
     /// \param lb Lower bounds for `x`.
     /// \param ub Upper bounds for `x`.
+    /// \param successful [Out] whether optimization was successful or an 'exception' was thrown.
     ///
     /// \return Number of iterations used.
     ///
     template <typename Foo>
-    inline int minimize(Foo& f, Vector& x, Scalar& fx, const Vector& lb, const Vector& ub)
+    inline int minimize(Foo& f, Vector& x, Scalar& fx, const Vector& lb, const Vector& ub, bool& successful)
     {
+        successful = true;
         using std::abs;
 
         // Dimension of the vector
         const int n = x.size();
         if (lb.size() != n || ub.size() != n)
-            throw std::invalid_argument("'lb' and 'ub' must have the same size as 'x'");
+        {
+            ESP_LOGE("LBFGSpp.LBFGSBSolver", "'lb' and 'ub' must have the same size as 'x'");
+            successful = false;
+            return -1;
+        }
 
         // Check whether the initial vector is within the bounds
         // If not, project to the feasible set
@@ -200,7 +206,10 @@ public:
             step_max = std::min(m_param.max_step, step_max);
             Scalar step = Scalar(1);
             step = std::min(step, step_max);
-            LineSearch<Scalar>::LineSearch(f, m_param, m_xp, m_drt, step_max, step, fx, m_grad, dg, x);
+            if(!LineSearch<Scalar>::LineSearch(f, m_param, m_xp, m_drt, step_max, step, fx, m_grad, dg, x)){
+                successful = false;
+                return -1;
+            }
 
             // New projected gradient norm
             m_projgnorm = proj_grad_norm(x, m_grad, lb, ub);

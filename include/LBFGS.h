@@ -78,6 +78,7 @@ public:
     template <typename Foo>
     inline int minimize(Foo& f, Vector& x, Scalar& fx)
     {
+        ESP_LOGW("LBFGSpp.LBFGSSolver", "Exceptions only removed with logs but no type of 'error handling' implemented for this non-constraint variant, only for L-BFGS-B");
         using std::abs;
 
         // Dimension of the vector

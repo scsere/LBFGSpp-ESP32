@@ -1,3 +1,10 @@
+if (DEFINED ESP_PLATFORM)
+    idf_component_register(
+            INCLUDE "include"
+            REQUIRES
+                Eigen
+    )
+else ()
 cmake_minimum_required(VERSION 3.10)
 project(lbfgspp VERSION 0.4.0 LANGUAGES CXX)
 
@@ -85,3 +92,4 @@ install(
 )
 
 add_subdirectory(examples)
+endif ()

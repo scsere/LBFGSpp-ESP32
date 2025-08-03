@@ -5,7 +5,7 @@
 #define LBFGSPP_LINE_SEARCH_BACKTRACKING_H
 
 #include <Eigen/Core>
-#include <stdexcept>  // std::runtime_error
+#include "EspLogging.h"
 #include "Param.h"
 
 namespace LBFGSpp {
@@ -52,7 +52,7 @@ public:
 
         // Check the value of step
         if (step <= Scalar(0))
-            throw std::invalid_argument("'step' must be positive");
+            ESP_LOGE("LBFGSpp.LineSearchBacktracking", "'step' must be positive");
 
         // Save the function value at the current x
         const Scalar fx_init = fx;
@@ -60,7 +60,7 @@ public:
         const Scalar dg_init = grad.dot(drt);
         // Make sure d points to a descent direction
         if (dg_init > 0)
-            throw std::logic_error("the moving direction increases the objective function value");
+            ESP_LOGE("LBFGSpp.LineSearchBacktracking", "the moving direction increases the objective function value");
 
         const Scalar test_decr = param.ftol * dg_init;
         Scalar width;
@@ -108,16 +108,16 @@ public:
             }
 
             if (step < param.min_step)
-                throw std::runtime_error("the line search step became smaller than the minimum value allowed");
+                ESP_LOGE("LBFGSpp.LineSearchBacktracking", "the line search step became smaller than the minimum value allowed");
 
             if (step > param.max_step)
-                throw std::runtime_error("the line search step became larger than the maximum value allowed");
+                ESP_LOGE("LBFGSpp.LineSearchBacktracking", "the line search step became larger than the maximum value allowed");
 
             step *= width;
         }
 
         if (iter >= param.max_linesearch)
-            throw std::runtime_error("the line search routine reached the maximum number of iterations");
+            ESP_LOGE("LBFGSpp.LineSearchBacktracking", "the line search routine reached the maximum number of iterations");
     }
 };
 

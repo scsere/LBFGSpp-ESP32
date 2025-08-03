@@ -5,7 +5,7 @@
 #define LBFGSPP_LINE_SEARCH_MORE_THUENTE_H
 
 #include <Eigen/Core>
-#include <stdexcept>  // std::invalid_argument, std::runtime_error
+#include "EspLogging.h"
 #include "Param.h"
 
 namespace LBFGSpp {
@@ -211,7 +211,7 @@ public:
     /// \param x        Out: The new point moved to.
     ///
     template <typename Foo, typename SolverParam>
-    static void LineSearch(Foo& f, const SolverParam& param,
+    static bool LineSearch(Foo& f, const SolverParam& param,
                            const Vector& xp, const Vector& drt, const Scalar& step_max,
                            Scalar& step, Scalar& fx, Vector& grad, Scalar& dg, Vector& x)
     {
@@ -220,9 +220,15 @@ public:
 
         // Check the value of step
         if (step <= Scalar(0))
-            throw std::invalid_argument("'step' must be positive");
+        {
+            ESP_LOGE("LBFGSpp.LineSearchMoreThuente", "'step' must be positive");
+            return false;
+        }
         if (step > step_max)
-            throw std::invalid_argument("'step' exceeds 'step_max'");
+        {
+            ESP_LOGE("LBFGSpp.LineSearchMoreThuente", "'step' exceeds 'step_max'")
+            return false;
+        };
 
         // Save the function value at the current x
         const Scalar fx_init = fx;
@@ -233,7 +239,10 @@ public:
 
         // Make sure d points to a descent direction
         if (dg_init >= Scalar(0))
-            throw std::logic_error("the moving direction does not decrease the objective function value");
+        {
+            ESP_LOGE("LBFGSpp.LineSearchMoreThuente", "the moving direction does not decrease the objective function value")
+            return false;
+        };
 
         // Tolerance for convergence test
         // Sufficient decrease
@@ -262,7 +271,7 @@ public:
         {
             // std::cout << "** Criteria met\n\n";
             // std::cout << "========================= Leaving line search =========================\n\n";
-            return;
+            return true;
         }
 
         // Extrapolation factor
@@ -361,16 +370,22 @@ public:
                 // Move {x, grad}_lo back before returning
                 x.swap(x_lo);
                 grad.swap(grad_lo);
-                return;
+                return true;
             }
             // Otherwise, recompute x and fx based on new_step
             step = new_step;
 
             if (step < param.min_step)
-                throw std::runtime_error("the line search step became smaller than the minimum value allowed");
+            {
+                ESP_LOGE("LBFGSpp.LineSearchMoreThuente", "the line search step became smaller than the minimum value allowed");
+                return false;
+            }
 
             if (step > param.max_step)
-                throw std::runtime_error("the line search step became larger than the maximum value allowed");
+            {
+                ESP_LOGE("LBFGSpp.LineSearchMoreThuente", "the line search step became larger than the maximum value allowed");
+                return false;
+            }
 
             // Update parameter, function value, and gradient
             x.noalias() = xp + step * drt;
@@ -384,7 +399,7 @@ public:
             {
                 // std::cout << "** Criteria met\n\n";
                 // std::cout << "========================= Leaving line search =========================\n\n";
-                return;
+                return true;
             }
 
             // Now assume step = step_max, and we need to decide whether to
@@ -405,7 +420,7 @@ public:
                 {
                     // std::cout << "** Maximum step size reached\n\n";
                     // std::cout << "========================= Leaving line search =========================\n\n";
-                    return;
+                    return true;
                 }
             }
         }
@@ -415,17 +430,19 @@ public:
         // sufficient decrease is found), but to return the best step size so far
         if (iter >= param.max_linesearch)
         {
-            // throw std::runtime_error("the line search routine reached the maximum number of iterations");
 
             // First test whether the last step is better than I_lo
             // If yes, return the last step
             const Scalar ft = fx - fx_init - step * test_decr;
             if (ft <= fI_lo)
-                return;
+                return true;
 
             // If not, then the best step size so far is I_lo, but it needs to be positive
             if (I_lo <= Scalar(0))
-                throw std::runtime_error("the line search routine is unable to sufficiently decrease the function value");
+            {
+                ESP_LOGE("LBFGSpp.LineSearchMoreThuente", "the line search routine is unable to sufficiently decrease the function value");
+                return false;
+            }
 
             // Return everything with _lo
             step = I_lo;
@@ -434,7 +451,7 @@ public:
             // Move {x, grad}_lo back
             x.swap(x_lo);
             grad.swap(grad_lo);
-            return;
+            return true;
         }
     }
 };
