@@ -2,7 +2,7 @@ if (DEFINED ESP_PLATFORM)
     idf_component_register(
             INCLUDE_DIRS "include"
             REQUIRES
-                Eigen
+                Eigen3
     )
 else ()
 cmake_minimum_required(VERSION 3.10)
